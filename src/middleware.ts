@@ -11,6 +11,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/generate-interview-questions(.*)",
   "/api/create-interviewer(.*)",
   "/api/analyze-communication(.*)",
+  "/api/check-invite(.*)",
 ]);
 
 const isProtectedRoute = createRouteMatcher([
