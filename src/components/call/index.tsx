@@ -204,20 +204,58 @@ function Call({ interview }: InterviewProps) {
     };
     setLoading(true);
 
-    const oldUserEmails: string[] = (
-      await ResponseService.getAllEmails(interview.id)
-    ).map((item) => item.email);
-    const OldUser =
-      oldUserEmails.includes(email) ||
-      (interview?.respondents && !interview?.respondents.includes(email));
+    try {
+      // Check if user has already responded
+      const oldUserEmails: string[] = (
+        await ResponseService.getAllEmails(interview.id)
+      ).map((item) => item.email);
+      const OldUser =
+        oldUserEmails.includes(email) ||
+        (interview?.respondents && !interview?.respondents.includes(email));
 
-    if (OldUser) {
-      setIsOldUser(true);
-    } else {
+      if (OldUser) {
+        setIsOldUser(true);
+        setLoading(false);
+        
+return;
+      }
+
+      // Check if invite exists for this email (only for non-anonymous interviews)
+      if (!interview?.is_anonymous) {
+        try {
+          const inviteCheckResponse = await axios.post("/api/check-invite", {
+            interviewId: interview.id,
+            email: email,
+          });
+
+          if (!inviteCheckResponse.data.invite) {
+            toast.error("No invite found for this email address. Please contact the interviewer for an invitation.");
+            setLoading(false);
+            
+            return;
+          }
+        } catch (error: any) {
+          if (error.response?.status === 404) {
+            toast.error("No invite found for this email address. Please contact the interviewer for an invitation.");
+            setLoading(false);
+            
+            return;
+          } else {
+            console.error("Error checking invite:", error);
+            toast.error("Error verifying invitation. Please try again.");
+            setLoading(false);
+            
+            return;
+          }
+        }
+      }
+
+      // Proceed with call registration
       const registerCallResponse: registerCallResponseType = await axios.post(
         "/api/register-call",
         { dynamic_data: data, interviewer_id: interview?.interviewer_id },
       );
+      
       if (registerCallResponse.data.registerCallResponse.access_token) {
         await webClient
           .startCall({
@@ -238,7 +276,11 @@ function Call({ interview }: InterviewProps) {
         });
       } else {
         console.log("Failed to register call");
+        toast.error("Failed to start the interview. Please try again.");
       }
+    } catch (error) {
+      console.error("Error starting conversation:", error);
+      toast.error("An error occurred while starting the interview. Please try again.");
     }
 
     setLoading(false);

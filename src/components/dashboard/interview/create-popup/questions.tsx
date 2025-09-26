@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
+import { nanoid } from "nanoid";
 import { useClerk, useOrganization } from "@clerk/nextjs";
 import { InterviewBase, Question } from "@/types/interview";
 import { useInterviews } from "@/contexts/interviews.context";
@@ -59,7 +59,7 @@ function QuestionsPopup({ interviewData, setProceed, setOpen }: Props) {
     if (questions.length < interviewData.question_count) {
       setQuestions([
         ...questions,
-        { id: uuidv4(), question: "", follow_up_count: 1 },
+        { id: nanoid(), question: "", follow_up_count: 1 },
       ]);
     }
   };

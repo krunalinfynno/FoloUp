@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import React, { useState, useEffect } from "react";
 import { useOrganization } from "@clerk/nextjs";
 import { useInterviews } from "@/contexts/interviews.context";
-import { Share2, Filter, Pencil, UserIcon, Eye, Palette } from "lucide-react";
+import { Share2, Filter, Pencil, UserIcon, Eye, Palette, Mail } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRouter } from "next/navigation";
 import { ResponseService } from "@/services/responses.service";
@@ -21,6 +21,7 @@ import Modal from "@/components/dashboard/Modal";
 import { toast } from "sonner";
 import { ChromePicker } from "react-color";
 import SharePopup from "@/components/dashboard/interview/sharePopup";
+import InviteList from "@/components/dashboard/interview/inviteList";
 import {
   Tooltip,
   TooltipTrigger,
@@ -66,6 +67,7 @@ function InterviewHome({ params, searchParams }: Props) {
   const [iconColor, seticonColor] = useState<string>("#4F46E5");
   const { organization } = useOrganization();
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const [currentView, setCurrentView] = useState<string>("responses");
 
   const seeInterviewPreviewPage = () => {
     const protocol = base_url?.includes("localhost") ? "http" : "https";
@@ -371,6 +373,31 @@ function InterviewHome({ params, searchParams }: Props) {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className={`bg-transparent shadow-none text-xs px-0 h-7 hover:scale-110 relative ${
+                      currentView === "invites" 
+                        ? "text-indigo-800 bg-indigo-100 rounded" 
+                        : "text-indigo-600"
+                    }`}
+                    onClick={(event) => {
+                      setCurrentView(currentView === "invites" ? "responses" : "invites");
+                    }}
+                  >
+                    <Mail size={16} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className="bg-zinc-300"
+                  side="bottom"
+                  sideOffset={4}
+                >
+                  <span className="text-black flex flex-row gap-4">Invites</span>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             <label className="inline-flex cursor-pointer">
               {currentPlan == "free_trial_over" ? (
@@ -403,155 +430,163 @@ function InterviewHome({ params, searchParams }: Props) {
             </label>
           </div>
           <div className="flex flex-row w-full p-2 h-[85%] gap-1 ">
-            <div className="w-[20%] flex flex-col p-2 divide-y-2 rounded-sm border-2 border-slate-100">
-              <div className="flex w-full justify-center py-2">
-                <Select
-                  onValueChange={async (newValue: string) => {
-                    setFilterStatus(newValue);
-                  }}
-                >
-                  <SelectTrigger className="w-[95%] bg-slate-100 rounded-lg">
-                    <Filter size={18} className=" text-slate-400" />
-                    <SelectValue placeholder="Filter By" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={CandidateStatus.NO_STATUS}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-gray-400 rounded-full mr-2" />
-                        No Status
-                      </div>
-                    </SelectItem>
-                    <SelectItem value={CandidateStatus.NOT_SELECTED}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-red-500 rounded-full mr-2" />
-                        Not Selected
-                      </div>
-                    </SelectItem>
-                    <SelectItem value={CandidateStatus.POTENTIAL}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2" />
-                        Potential
-                      </div>
-                    </SelectItem>
-                    <SelectItem value={CandidateStatus.SELECTED}>
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-green-500 rounded-full mr-2" />
-                        Selected
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="ALL">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 border-2 border-gray-300 rounded-full mr-2" />
-                        All
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <ScrollArea className="h-full p-1 rounded-md border-none">
-                {filterResponses().length > 0 ? (
-                  filterResponses().map((response) => (
-                    <div
-                      className={`p-2 rounded-md hover:bg-indigo-100 border-2 my-1 text-left text-xs ${
-                        searchParams.call == response.call_id
-                          ? "bg-indigo-200"
-                          : "border-indigo-100"
-                      } flex flex-row justify-between cursor-pointer w-full`}
-                      key={response?.id}
-                      onClick={() => {
-                        router.push(
-                          `/interviews/${params.interviewId}?call=${response.call_id}`,
-                        );
-                        handleResponseClick(response);
+            {currentView === "responses" ? (
+              <>
+                <div className="w-[20%] flex flex-col p-2 divide-y-2 rounded-sm border-2 border-slate-100">
+                  <div className="flex w-full justify-center py-2">
+                    <Select
+                      onValueChange={async (newValue: string) => {
+                        setFilterStatus(newValue);
                       }}
                     >
-                      <div className="flex flex-row gap-1 items-center w-full">
-                        {response.candidate_status === "NOT_SELECTED" ? (
-                          <div className="w-[5%] h-full bg-red-500 rounded-sm" />
-                        ) : response.candidate_status === "POTENTIAL" ? (
-                          <div className="w-[5%] h-full bg-yellow-500 rounded-sm" />
-                        ) : response.candidate_status === "SELECTED" ? (
-                          <div className="w-[5%] h-full bg-green-500 rounded-sm" />
-                        ) : (
-                          <div className="w-[5%] h-full bg-gray-400 rounded-sm" />
-                        )}
-                        <div className="flex items-center justify-between w-full">
-                          <div className="flex flex-col my-auto">
-                            <p className="font-medium mb-[2px]">
-                              {response?.name
-                                ? `${response?.name}'s Response`
-                                : "Anonymous"}
-                            </p>
-                            <p className="">
-                              {formatTimestampToDateHHMM(
-                                String(response?.created_at),
-                              )}
-                            </p>
+                      <SelectTrigger className="w-[95%] bg-slate-100 rounded-lg">
+                        <Filter size={18} className=" text-slate-400" />
+                        <SelectValue placeholder="Filter By" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={CandidateStatus.NO_STATUS}>
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-gray-400 rounded-full mr-2" />
+                            No Status
                           </div>
-                          <div className="flex flex-col items-center justify-center ml-auto flex-shrink-0">
-                            {!response.is_viewed && (
-                              <div className="w-4 h-4 flex items-center justify-center mb-1">
-                                <div className="text-indigo-500 text-xl leading-none">
-                                  ●
+                        </SelectItem>
+                        <SelectItem value={CandidateStatus.NOT_SELECTED}>
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-red-500 rounded-full mr-2" />
+                            Not Selected
+                          </div>
+                        </SelectItem>
+                        <SelectItem value={CandidateStatus.POTENTIAL}>
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2" />
+                            Potential
+                          </div>
+                        </SelectItem>
+                        <SelectItem value={CandidateStatus.SELECTED}>
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 bg-green-500 rounded-full mr-2" />
+                            Selected
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="ALL">
+                          <div className="flex items-center">
+                            <div className="w-3 h-3 border-2 border-gray-300 rounded-full mr-2" />
+                            All
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <ScrollArea className="h-full p-1 rounded-md border-none">
+                    {filterResponses().length > 0 ? (
+                      filterResponses().map((response) => (
+                        <div
+                          className={`p-2 rounded-md hover:bg-indigo-100 border-2 my-1 text-left text-xs ${
+                            searchParams.call == response.call_id
+                              ? "bg-indigo-200"
+                              : "border-indigo-100"
+                          } flex flex-row justify-between cursor-pointer w-full`}
+                          key={response?.id}
+                          onClick={() => {
+                            router.push(
+                              `/interviews/${params.interviewId}?call=${response.call_id}`,
+                            );
+                            handleResponseClick(response);
+                          }}
+                        >
+                          <div className="flex flex-row gap-1 items-center w-full">
+                            {response.candidate_status === "NOT_SELECTED" ? (
+                              <div className="w-[5%] h-full bg-red-500 rounded-sm" />
+                            ) : response.candidate_status === "POTENTIAL" ? (
+                              <div className="w-[5%] h-full bg-yellow-500 rounded-sm" />
+                            ) : response.candidate_status === "SELECTED" ? (
+                              <div className="w-[5%] h-full bg-green-500 rounded-sm" />
+                            ) : (
+                              <div className="w-[5%] h-full bg-gray-400 rounded-sm" />
+                            )}
+                            <div className="flex items-center justify-between w-full">
+                              <div className="flex flex-col my-auto">
+                                <p className="font-medium mb-[2px]">
+                                  {response?.name
+                                    ? `${response?.name}'s Response`
+                                    : "Anonymous"}
+                                </p>
+                                <p className="">
+                                  {formatTimestampToDateHHMM(
+                                    String(response?.created_at),
+                                  )}
+                                </p>
+                              </div>
+                              <div className="flex flex-col items-center justify-center ml-auto flex-shrink-0">
+                                {!response.is_viewed && (
+                                  <div className="w-4 h-4 flex items-center justify-center mb-1">
+                                    <div className="text-indigo-500 text-xl leading-none">
+                                      ●
+                                    </div>
+                                  </div>
+                                )}
+                                <div
+                                  className={`w-6 h-6 flex items-center justify-center ${
+                                    response.is_viewed ? "h-full" : ""
+                                  }`}
+                                >
+                                  {response.analytics &&
+                                    response.analytics.overallScore !==
+                                      undefined && (
+                                      <TooltipProvider>
+                                        <Tooltip>
+                                          <TooltipTrigger asChild>
+                                            <div className="w-6 h-6 rounded-full bg-white border-2 border-indigo-500 flex items-center justify-center">
+                                              <span className="text-indigo-500 text-xs font-semibold">
+                                                {response?.analytics?.overallScore}
+                                              </span>
+                                            </div>
+                                          </TooltipTrigger>
+                                          <TooltipContent
+                                            className="bg-gray-500"
+                                            side="bottom"
+                                            sideOffset={4}
+                                          >
+                                            <span className="text-white font-normal flex flex-row gap-4">
+                                              Overall Score
+                                            </span>
+                                          </TooltipContent>
+                                        </Tooltip>
+                                      </TooltipProvider>
+                                    )}
                                 </div>
                               </div>
-                            )}
-                            <div
-                              className={`w-6 h-6 flex items-center justify-center ${
-                                response.is_viewed ? "h-full" : ""
-                              }`}
-                            >
-                              {response.analytics &&
-                                response.analytics.overallScore !==
-                                  undefined && (
-                                  <TooltipProvider>
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <div className="w-6 h-6 rounded-full bg-white border-2 border-indigo-500 flex items-center justify-center">
-                                          <span className="text-indigo-500 text-xs font-semibold">
-                                            {response?.analytics?.overallScore}
-                                          </span>
-                                        </div>
-                                      </TooltipTrigger>
-                                      <TooltipContent
-                                        className="bg-gray-500"
-                                        side="bottom"
-                                        sideOffset={4}
-                                      >
-                                        <span className="text-white font-normal flex flex-row gap-4">
-                                          Overall Score
-                                        </span>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </TooltipProvider>
-                                )}
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-center text-gray-500">
-                    No responses to display
-                  </p>
+                      ))
+                    ) : (
+                      <p className="text-center text-gray-500">
+                        No responses to display
+                      </p>
+                    )}
+                  </ScrollArea>
+                </div>
+                {responses && (
+                  <div className="w-[85%] rounded-md ">
+                    {searchParams.call ? (
+                      <CallInfo
+                        call_id={searchParams.call}
+                        onDeleteResponse={handleDeleteResponse}
+                        onCandidateStatusChange={handleCandidateStatusChange}
+                      />
+                    ) : searchParams.edit ? (
+                      <EditInterview interview={interview} />
+                    ) : (
+                      <SummaryInfo responses={responses} interview={interview} />
+                    )}
+                  </div>
                 )}
-              </ScrollArea>
-            </div>
-            {responses && (
-              <div className="w-[85%] rounded-md ">
-                {searchParams.call ? (
-                  <CallInfo
-                    call_id={searchParams.call}
-                    onDeleteResponse={handleDeleteResponse}
-                    onCandidateStatusChange={handleCandidateStatusChange}
-                  />
-                ) : searchParams.edit ? (
-                  <EditInterview interview={interview} />
-                ) : (
-                  <SummaryInfo responses={responses} interview={interview} />
-                )}
+              </>
+            ) : (
+              <div className="w-full p-4">
+                <InviteList interviewId={params.interviewId} />
               </div>
             )}
           </div>

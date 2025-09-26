@@ -82,3 +82,14 @@ CREATE TABLE feedback (
     feedback TEXT,
     satisfaction INTEGER
 );
+
+CREATE TABLE invite (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
+    interview_id TEXT REFERENCES interview(id),
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    status TEXT DEFAULT 'pending',
+    sent_at TIMESTAMP WITH TIME ZONE,
+    responded_at TIMESTAMP WITH TIME ZONE
+);

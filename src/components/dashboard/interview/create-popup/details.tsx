@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
+import { nanoid } from "nanoid";
 import { useInterviewers } from "@/contexts/interviewers.context";
 import { InterviewBase, Question } from "@/types/interview";
 import { ChevronRight, ChevronLeft, Info } from "lucide-react";
@@ -91,7 +91,7 @@ function DetailsPopup({
 
     const updatedQuestions = generatedQuestionsResponse.questions.map(
       (question: Question) => ({
-        id: uuidv4(),
+        id: nanoid(),
         question: question.question.trim(),
         follow_up_count: 1,
       }),
@@ -118,7 +118,7 @@ function DetailsPopup({
       ...interviewData,
       name: name.trim(),
       objective: objective.trim(),
-      questions: [{ id: uuidv4(), question: "", follow_up_count: 1 }],
+      questions: [{ id: nanoid(), question: "", follow_up_count: 1 }],
       interviewer_id: selectedInterviewer,
       question_count: Number(numQuestions),
       time_duration: String(duration),

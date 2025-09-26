@@ -2,7 +2,7 @@
 
 import { Interview, Question } from "@/types/interview";
 import React, { useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { nanoid } from "nanoid";
 import { Plus, SaveIcon, TrashIcon } from "lucide-react";
 import { useInterviewers } from "@/contexts/interviewers.context";
 import QuestionCard from "@/components/dashboard/interview/create-popup/questionCard";
@@ -92,7 +92,7 @@ function EditInterview({ interview }: EditInterviewProps) {
     if (questions.length < numQuestions) {
       setQuestions([
         ...questions,
-        { id: uuidv4(), question: "", follow_up_count: 1 },
+        { id: nanoid(), question: "", follow_up_count: 1 },
       ]);
     }
   };
