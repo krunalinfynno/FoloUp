@@ -320,24 +320,24 @@ return;
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       {isStarted && <TabSwitchWarning />}
-      <div className="bg-white rounded-md md:w-[80%] w-[90%]">
-        <Card className="h-[88vh] rounded-lg border-2 border-b-4 border-r-4 border-black text-xl font-bold transition-all  md:block dark:border-white ">
+      <div className="md:w-[80%] w-[90%]">
+        <div className="h-4 rounded-lg border-[1px] bg-white border-black mb-4">
+          <div
+            className=" bg-indigo-600 h-[15px] rounded-lg"
+            style={{
+              width: isEnded
+                ? "100%"
+                : `${
+                    (Number(currentTimeDuration) /
+                      (Number(interviewTimeDuration) * 60)) *
+                    100
+                  }%`,
+            }}
+          />
+        </div>
+        <Card className="h-[84vh] bg-white rounded-lg border-2 border-b-4 border-r-4 border-black text-xl font-bold transition-all  md:block dark:border-white ">
           <div>
-            <div className="m-4 h-[15px] rounded-lg border-[1px]  border-black">
-              <div
-                className=" bg-indigo-600 h-[15px] rounded-lg"
-                style={{
-                  width: isEnded
-                    ? "100%"
-                    : `${
-                        (Number(currentTimeDuration) /
-                          (Number(interviewTimeDuration) * 60)) *
-                        100
-                      }%`,
-                }}
-              />
-            </div>
-            <CardHeader className="items-center p-1">
+            <CardHeader className="items-center">
               <Image src="https://infynno.com/wp-content/uploads/2022/02/logo-infynno-solutions.png" alt="Infynno" width={200} height={92} className="mb-4"/>
               {!isEnded && (
                 <CardTitle className="flex flex-row items-center text-lg md:text-xl font-bold mb-2">
@@ -539,7 +539,6 @@ return;
                 </AlertDialog>
               </div>
             )}
-
             {isEnded && !isOldUser && (
               <div className="w-fit min-w-[400px] max-w-[400px] mx-auto mt-2  border border-indigo-200 rounded-md p-2 m-2 bg-slate-50  absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
                 <div>

@@ -160,15 +160,15 @@ function DetailsPopup({
           <div className="relative flex items-center mt-1">
             <div
               id="slider-3"
-              className=" h-36 pt-1 overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide w-[27.5rem]"
+              className=" h-36 pt-1 overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide w-[30.5rem]"
             >
-              {interviewers.map((item, key) => (
+              {interviewers.map((item) => (
                 <div
-                  className=" p-0 inline-block cursor-pointer ml-1 mr-5 rounded-xl shrink-0 overflow-hidden"
+                  className="relative p-0 inline-block cursor-pointer ml-1 mr-5 rounded-xl shrink-0 overflow-hidden"
                   key={item.id}
                 >
                   <button
-                    className="absolute ml-9"
+                    className="absolute right-1 top-1"
                     onClick={(e) => {
                       e.stopPropagation();
                       setInterviewerDetails(item);
@@ -261,7 +261,6 @@ function DetailsPopup({
               <input
                 type="number"
                 step="1"
-                max="5"
                 min="1"
                 className="border-b-2 text-center focus:outline-none  border-gray-500 w-14 px-2 py-0.5 ml-3"
                 value={numQuestions}
@@ -271,9 +270,6 @@ function DetailsPopup({
                     value === "" ||
                     (Number.isInteger(Number(value)) && Number(value) > 0)
                   ) {
-                    if (Number(value) > 5) {
-                      value = "5";
-                    }
                     setNumQuestions(value);
                   }
                 }}
@@ -284,7 +280,6 @@ function DetailsPopup({
               <input
                 type="number"
                 step="1"
-                max="10"
                 min="1"
                 className="border-b-2 text-center focus:outline-none  border-gray-500 w-14 px-2 py-0.5 ml-3"
                 value={duration}
@@ -294,9 +289,6 @@ function DetailsPopup({
                     value === "" ||
                     (Number.isInteger(Number(value)) && Number(value) > 0)
                   ) {
-                    if (Number(value) > 10) {
-                      value = "10";
-                    }
                     setDuration(value);
                   }
                 }}

@@ -85,7 +85,7 @@ function InterviewInterface({ params }: Props) {
 
   return (
     <div>
-      <div className="hidden md:block p-8 mx-auto form-container">
+      <div className="hidden md:block mx-auto form-container">
         {!interview ? (
           interviewNotFound ? (
             <PopUpMessage
