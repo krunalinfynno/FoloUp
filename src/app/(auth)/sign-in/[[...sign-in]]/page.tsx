@@ -1,3 +1,4 @@
+'use client';
 import { SignIn } from "@clerk/nextjs";
 
 function SignInPage() {
@@ -8,7 +9,7 @@ function SignInPage() {
       </div>
       <div className="block md:hidden px-3 h-[60%] my-auto">
         <h1 className="text-2xl font-bold text-center text-gray-800">
-          Welcome to Folo<span className="text-indigo-600">Up</span>
+          Welcome to Infynno Solution LLP Interview Platform
         </h1>
         <h1 className="text-md my-3 text-center text-gray-800">
           Mobile version is currently under construction. 🚧

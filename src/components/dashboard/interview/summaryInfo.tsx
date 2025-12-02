@@ -171,9 +171,9 @@ function SummaryInfo({ responses, interview }: SummaryProps) {
   }, [responses]);
 
   return (
-    <div className="h-screen z-[10] mx-2">
+    <div className="h-[calc(100vh-120px)] z-[10] mx-2">
       {responses.length > 0 ? (
-        <div className="bg-slate-200 rounded-2xl min-h-[120px] p-2 ">
+        <div className="bg-slate-200 rounded-2xl min-h-[120px] p-2">
           <div className="flex flex-row gap-2 justify-between items-center mx-2">
             <div className="flex flex-row gap-2 items-center">
               <p className="font-semibold my-2">Overall Analysis</p>

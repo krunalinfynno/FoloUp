@@ -338,7 +338,7 @@ return;
         <Card className="h-[84vh] bg-white rounded-lg border-2 border-b-4 border-r-4 border-black text-xl font-bold transition-all  md:block dark:border-white ">
           <div>
             <CardHeader className="items-center">
-              <Image src="https://infynno.com/wp-content/uploads/2022/02/logo-infynno-solutions.png" alt="Infynno" width={200} height={92} className="mb-4"/>
+              <Image src="/logo.png" alt="Infynno" width={200} height={92} className="mb-4"/>
               {!isEnded && (
                 <CardTitle className="flex flex-row items-center text-lg md:text-xl font-bold mb-2">
                   {interview?.name}

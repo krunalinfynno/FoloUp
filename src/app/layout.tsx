@@ -1,22 +1,26 @@
+import "@/app/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "../globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Providers from "@/components/providers";
+import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "FoloUp",
-  description: "AI powered Interviews",
+  title: "Infynno's AI-powered Interview Platform",
+  description: "Infynno's AI-powered Interviews Platform for hiring talents",
+  icons: {
+    icon: "/favicon.png",
+  },
   openGraph: {
-    title: "FoloUp",
-    description: "AI-powered Interviews",
-    siteName: "FoloUp",
+    title: "Infynno's AI-powered Interview Platform",
+    description: "Infynno's AI-powered Interviews Platform for hiring talents",
+    siteName: "Infynno's AI-powered Interview Platform",
     images: [
       {
-        url: "/foloup.png",
+        url: "/og.png",
         width: 800,
         height: 600,
       },
@@ -33,10 +37,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/browser-user-icon.ico" />
-      </head>
-      <body className={inter.className}>
+      <body
+        className={cn(
+          inter.className,
+          "antialiased overflow-hidden min-h-screen",
+        )}
+      >
         <ClerkProvider>
           <Providers>
             {children}
@@ -58,3 +64,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+

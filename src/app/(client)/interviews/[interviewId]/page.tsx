@@ -257,14 +257,14 @@ function InterviewHome({ params, searchParams }: Props) {
   };
 
   return (
-    <div className="flex flex-col w-full h-full m-2 bg-white">
+    <div className="flex flex-col w-full h-full bg-white">
       {loading ? (
         <div className="flex flex-col items-center justify-center h-[80%] w-full">
           <LoaderWithText />
         </div>
       ) : (
         <>
-          <div className="flex flex-row p-3 pt-4 justify-center gap-6 items-center sticky top-2 bg-white">
+          <div className="flex flex-row p-3 pt-4 justify-center gap-6 items-center sticky top-0 bg-white z-40">
             <div className="font-bold text-md">{interview?.name}</div>
 
             <div
@@ -429,7 +429,7 @@ function InterviewHome({ params, searchParams }: Props) {
               )}
             </label>
           </div>
-          <div className="flex flex-row w-full p-2 h-[85%] gap-1 ">
+          <div className="flex flex-row w-full h-[85%] gap-1 ">
             {currentView === "responses" ? (
               <>
                 <div className="w-[20%] flex flex-col p-2 divide-y-2 rounded-sm border-2 border-slate-100">
